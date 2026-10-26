@@ -107,6 +107,7 @@ signals:
     void deviceUpdated(void);
     void availabilityUpdated(void);
     void propertiesUpdated(void);
+    void pollFinished(void);
 
 };
 

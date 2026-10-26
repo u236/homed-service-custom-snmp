@@ -53,13 +53,16 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
             connect(device.data(), &DeviceObject::deviceUpdated, this, &Controller::deviceUpdated);
             connect(device.data(), &DeviceObject::availabilityUpdated, this, &Controller::availabilityUpdated);
             connect(device.data(), &DeviceObject::propertiesUpdated, this, &Controller::propertiesUpdated);
+            connect(device.data(), &DeviceObject::pollFinished, this, &Controller::update);
 
             m_devices.append(device);
         }
     }
 
     connect(m_timer, &QTimer::timeout, this, &Controller::update);
-    m_timer->start(1000);
+
+    m_timer->setSingleShot(true);
+    m_timer->start(0);
 }
 
 void Controller::publishDevice(DeviceObject *device)
@@ -213,13 +216,30 @@ void Controller::propertiesUpdated(void)
 
 void Controller::update(void)
 {
+    qint64 now = QDateTime::currentMSecsSinceEpoch(), nextPoll = -1;
+
     for (int i = 0; i < m_devices.count(); i++)
     {
         const Device &device = m_devices.at(i);
+        qint64 time = device->pollTime() + device->pollInterval();
 
-        if (device->polling() || device->pollTime() + device->pollInterval() > QDateTime::currentSecsSinceEpoch())
+        if (device->polling())
             continue;
 
-        device->poll();
+        if (time <= now)
+        {
+            device->poll();
+            continue;
+        }
+
+        if (nextPoll >= 0 && nextPoll <= time)
+            continue;
+
+        nextPoll = time;
     }
+
+    if (nextPoll < 0)
+        return;
+
+    m_timer->start(nextPoll - now);
 }

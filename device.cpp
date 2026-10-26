@@ -47,7 +47,7 @@ QJsonObject DeviceObject::options(void)
 void DeviceObject::poll(void)
 {
     m_index = 0;
-    m_pollTime = QDateTime::currentSecsSinceEpoch();
+    m_pollTime = QDateTime::currentMSecsSinceEpoch();
     m_polling = true;
 
     if (m_discovery)
@@ -318,6 +318,7 @@ void DeviceObject::finished(int exitCode, QProcess::ExitStatus)
             updateAvailability(Availability::Offline);
             m_discovery = true;
             m_polling = false;
+            emit pollFinished();
             return;
         }
 
@@ -343,11 +344,10 @@ void DeviceObject::finished(int exitCode, QProcess::ExitStatus)
     updateAvailability(Availability::Online);
     m_polling = false;
 
-    if (m_discovery)
-    {
+    if (!m_discovery)
+        parseProperties();
+    else
         discovery();
-        return;
-    }
 
-    parseProperties();
+    emit pollFinished();
 }

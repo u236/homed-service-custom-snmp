@@ -2,7 +2,7 @@
 #define CONTROLLER_H
 
 #define SERVICE_VERSION     "1.0.0"
-#define DEFAULT_INTERVAL    5
+#define DEFAULT_INTERVAL    5000
 
 #include "device.h"
 #include "homed.h"
