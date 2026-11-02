@@ -65,6 +65,7 @@ void DeviceObject::poll(void)
 
         m_list.append(OID_HR_STORAGE_ENTRY);
         m_list.append(OID_HR_PROCESSOR_LOAD);
+        m_list.append(OID_SYS_UPTIME);
     }
 
     m_values.clear();
@@ -288,8 +289,10 @@ void DeviceObject::discovery(void)
     m_map.insert(OID_SYS_UPTIME, "uptime");
     exposes.append("uptime");
 
-    m_pollTime = 0;
-    m_discovery = false;
+    m_discovery = m_cpuIndex.isEmpty() && m_values.contains(OID_SYS_UPTIME) && m_values.value(OID_SYS_UPTIME).toLongLong() * 10 < DISCOVERY_TIMEOUT;
+
+    if (!m_discovery)
+        m_pollTime = 0;
 
     if (m_ready && m_exposes == exposes)
         return;

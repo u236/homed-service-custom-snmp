@@ -4,6 +4,9 @@
 #define REQUEST_MAX_ITEMS           10
 #define SNMP_ERROR_PACKET           2
 
+#define DISCOVERY_INTERVAL          5000
+#define DISCOVERY_TIMEOUT           90000
+
 #define OID_SYS_UPTIME              "1.3.6.1.2.1.1.3.0"
 
 #define OID_IF_TYPE                 "1.3.6.1.2.1.2.2.1.3"
@@ -53,7 +56,7 @@ public:
     inline QString id(void) { return m_id; }
     inline QString name(void) { return m_data.value("name").toString(m_id); }
 
-    inline quint32 pollInterval(void) { return m_pollInterval; }
+    inline quint32 pollInterval(void) { return m_discovery ? DISCOVERY_INTERVAL : m_pollInterval; }
     inline qint64 pollTime(void) { return m_pollTime; }
 
     inline bool polling(void) { return m_polling; }

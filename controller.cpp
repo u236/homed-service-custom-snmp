@@ -29,7 +29,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
         if (name != "log" && name != "mqtt" && name != "snmp")
         {
             QString address = getConfig()->value(QString("%1/address").arg(name)).toString(), community = getConfig()->value(QString("%1/community").arg(name), "public").toString(), disks = getConfig()->value(QString("%1/disks").arg(name)).toStringList().join(','), ports = getConfig()->value(QString("%1/ports").arg(name)).toStringList().join(',');
-            quint32 interval = getConfig()->value(QString("%1/interval").arg(name), DEFAULT_INTERVAL).toInt();
+            quint32 interval = getConfig()->value(QString("%1/interval").arg(name), DISCOVERY_INTERVAL).toInt();
             bool debug = getConfig()->value(QString("%1/debug").arg(name), false).toBool();
             QMap <QString, QVariant> items, options;
             Device device;
