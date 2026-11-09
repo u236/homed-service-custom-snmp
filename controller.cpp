@@ -67,7 +67,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
 
 void Controller::publishDevice(DeviceObject *device)
 {
-    QJsonObject data = device->data().isEmpty() ? QJsonObject {{"active", true}, {"cloud", false}, {"discovery", false}} : device->data();
+    QJsonObject data = device->data().isEmpty() ? QJsonObject {{"active", true}, {"discovery", false}, {"cloud", false}} : device->data();
 
     data.insert("id", device->id());
     data.insert("service", QCoreApplication::applicationName());
