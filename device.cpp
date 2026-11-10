@@ -115,9 +115,17 @@ void DeviceObject::parseProperties(void)
 
             default:
             {
-                QVariant data = Parser::stringValue(value);
-                double divider = m_options.value(it.value()).toMap().value("divider", 1).toDouble();
-                properties.insert(it.value(), data.type() == QVariant::Double && divider ? data.toDouble() / divider : data);
+                QMap <QString, QVariant> options = m_options.value(it.value()).toMap();
+                QVariant option = options.value("enum"), data = Parser::stringValue(value);
+                double divider = options.value("divider", 1).toDouble();
+
+                switch (option.type())
+                {
+                    case QVariant::Map:  properties.insert(it.value(), option.toMap().value(value)); break;
+                    case QVariant::List: properties.insert(it.value(), option.toList().value(value.toInt())); break;
+                    default:             properties.insert(it.value(), data.type() == QVariant::Double && divider ? data.toDouble() / divider : data); break;
+                }
+
                 break;
             }
         }
